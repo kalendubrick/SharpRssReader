@@ -46,10 +46,13 @@ jobs:
         dotnet-version: 6.0.x
 
     - name: Restore
+      working-directory: ./src/SharpRssReader
       run: dotnet restore
 
     - name: Build
+      working-directory: ./src/SharpRssReader
       run: dotnet build --configuration Release --no-restore
 
     - name: Test
+      working-directory: ./src/SharpRssReader
       run: dotnet test
