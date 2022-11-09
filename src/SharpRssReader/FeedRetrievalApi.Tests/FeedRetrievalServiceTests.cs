@@ -1,11 +1,10 @@
-namespace FeedRetrievalApi.Tests
-{
-    public class UnitTest1
-    {
-        [Fact]
-        public void Test1()
-        {
+namespace FeedRetrievalApi.Tests;
 
-        }
+public class FeedRetrievalServiceTests
+{
+    [Fact]
+    public void Test1()
+    {
+
     }
 }
