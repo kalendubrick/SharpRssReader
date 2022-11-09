@@ -1,7 +1,4 @@
-global using Serilog;
-
 using FeedRetrievalApi.Services;
-
 
 var builder = WebApplication.CreateBuilder(args);
 
