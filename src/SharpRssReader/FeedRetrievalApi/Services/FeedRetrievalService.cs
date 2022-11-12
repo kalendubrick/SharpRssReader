@@ -1,4 +1,5 @@
-﻿using System.ServiceModel.Syndication;
+﻿using FeedRetrievalApi.Exceptions;
+using System.ServiceModel.Syndication;
 using System.Xml;
 
 namespace FeedRetrievalApi.Services;
@@ -37,9 +38,10 @@ public class FeedRetrievalService : IFeedRetrievalService
 
             if (!feedResponse.IsSuccessStatusCode)
             {
-                _logger.LogDebug("Feed request failed, returning empty feed");
+                _logger.LogDebug("Feed request failed");
 
-                return new SyndicationFeed();
+                throw new FeedRequestException(
+                    $"Request failed: {feedResponse.StatusCode}: {feedResponse.ReasonPhrase}");
             }
 
             _logger.LogTrace(
@@ -50,11 +52,11 @@ public class FeedRetrievalService : IFeedRetrievalService
             _logger.LogTrace(
                 "Created stream from response: {Stream}", feedStream);
 
-            if (feedStream is null)
+            if (feedStream?.Length == 0)
             {
-                _logger.LogDebug("Feed is empty");
+                _logger.LogError("Feed is empty");
 
-                return new SyndicationFeed();
+                throw new FeedEmptyException();
             }
 
             _logger.LogTrace(
@@ -83,7 +85,8 @@ public class FeedRetrievalService : IFeedRetrievalService
                     "Error loading feed: {Exception}",
                     e);
 
-                throw;
+                throw new FeedLoadException(
+                    "Error loading feed", e);
             }
         }   
     }
