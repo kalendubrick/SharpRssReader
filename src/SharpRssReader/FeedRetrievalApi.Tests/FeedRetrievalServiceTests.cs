@@ -1,17 +1,17 @@
+using FeedRetrievalApi.Exceptions;
 using FeedRetrievalApi.Services;
 using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
 using Moq.Protected;
 using System.Net;
-using Xunit;
+using System.ServiceModel.Syndication;
 
 namespace FeedRetrievalApi.Tests;
 
 public class FeedRetrievalServiceTests
 {
     const string ValidRssFeed =
-    @"
-        <?xml version=""1.0"" encoding=""UTF-8""?>
+    @"<?xml version=""1.0"" encoding=""UTF-8""?>
         <rss version=""2.0"">
            <channel>
               <title>Liftoff News</title>
@@ -55,14 +55,14 @@ public class FeedRetrievalServiceTests
         ";
 
     [Fact]
-    public async Task Test1()
+    public async Task Valid_feed_content_should_return_feed_object()
     {
         // Arrange
         var mockFactory = new Mock<IHttpClientFactory>();
 
         var mockHttpMessageHandler = new Mock<HttpMessageHandler>();
         mockHttpMessageHandler.Protected()
-            .Setup<Task<HttpResponseMessage>>("GetAsync", ItExpr.IsAny<HttpRequestMessage>(), ItExpr.IsAny<CancellationToken>())
+            .Setup<Task<HttpResponseMessage>>("SendAsync", ItExpr.IsAny<HttpRequestMessage>(), ItExpr.IsAny<CancellationToken>())
             .ReturnsAsync(new HttpResponseMessage
             {
                 StatusCode = HttpStatusCode.OK,
@@ -81,5 +81,93 @@ public class FeedRetrievalServiceTests
 
         // Assert
         Assert.NotNull(result);
+        Assert.IsType<SyndicationFeed>(result);
+    }
+
+    [Fact]
+    public async Task Empty_feed_should_throw_feed_empty_exception()
+    {
+        // Arrange
+        var mockFactory = new Mock<IHttpClientFactory>();
+
+        var mockHttpMessageHandler = new Mock<HttpMessageHandler>();
+        mockHttpMessageHandler.Protected()
+            .Setup<Task<HttpResponseMessage>>("SendAsync", ItExpr.IsAny<HttpRequestMessage>(), ItExpr.IsAny<CancellationToken>())
+            .ReturnsAsync(new HttpResponseMessage
+            {
+                StatusCode = HttpStatusCode.OK,
+                Content = null
+            });
+
+        var client = new HttpClient(mockHttpMessageHandler.Object);
+        mockFactory.Setup(_ => _.CreateClient(It.IsAny<string>())).Returns(client);
+
+        var feedRetrievalService = new FeedRetrievalService(
+            mockFactory.Object,
+            new NullLogger<FeedRetrievalService>());
+
+        // Act / Assert
+        await Assert.ThrowsAsync<FeedEmptyException>(async () =>
+        {
+            await feedRetrievalService.ReadFeedAsync("https://example.com/rss.xml");
+        });
+    }
+
+    [Fact]
+    public async Task Malformed_feed_should_throw_feed_load_exception()
+    {
+        // Arrange
+        var mockFactory = new Mock<IHttpClientFactory>();
+
+        var mockHttpMessageHandler = new Mock<HttpMessageHandler>();
+        mockHttpMessageHandler.Protected()
+            .Setup<Task<HttpResponseMessage>>("SendAsync", ItExpr.IsAny<HttpRequestMessage>(), ItExpr.IsAny<CancellationToken>())
+            .ReturnsAsync(new HttpResponseMessage
+            {
+                StatusCode = HttpStatusCode.OK,
+                Content = new StringContent("<xml")
+            });
+
+        var client = new HttpClient(mockHttpMessageHandler.Object);
+        mockFactory.Setup(_ => _.CreateClient(It.IsAny<string>())).Returns(client);
+
+        var feedRetrievalService = new FeedRetrievalService(
+            mockFactory.Object,
+            new NullLogger<FeedRetrievalService>());
+
+        // Act / Assert
+        await Assert.ThrowsAsync<FeedLoadException>(async () =>
+        {
+            await feedRetrievalService.ReadFeedAsync("https://example.com/rss.xml");
+        });
+    }
+
+    [Fact]
+    public async Task Unsuccessful_status_code_should_throw_feed__request_exception()
+    {
+        // Arrange
+        var mockFactory = new Mock<IHttpClientFactory>();
+
+        var mockHttpMessageHandler = new Mock<HttpMessageHandler>();
+        mockHttpMessageHandler.Protected()
+            .Setup<Task<HttpResponseMessage>>("SendAsync", ItExpr.IsAny<HttpRequestMessage>(), ItExpr.IsAny<CancellationToken>())
+            .ReturnsAsync(new HttpResponseMessage
+            {
+                StatusCode = HttpStatusCode.Unauthorized,
+                Content = null
+            });
+
+        var client = new HttpClient(mockHttpMessageHandler.Object);
+        mockFactory.Setup(_ => _.CreateClient(It.IsAny<string>())).Returns(client);
+
+        var feedRetrievalService = new FeedRetrievalService(
+            mockFactory.Object,
+            new NullLogger<FeedRetrievalService>());
+
+        // Act / Assert
+        await Assert.ThrowsAsync<FeedRequestException>(async () =>
+        {
+            await feedRetrievalService.ReadFeedAsync("https://example.com/rss.xml");
+        });
     }
 }
