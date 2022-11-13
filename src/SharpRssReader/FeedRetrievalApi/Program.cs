@@ -40,23 +40,19 @@ app.MapGet("/feed", async (string feedUrl, [FromServices] IFeedRetrievalService 
     {
         var feed = await feedService.ReadFeedAsync(feedUrl);
 
-        response.StatusCode = StatusCodes.Status200OK;
-        await response.WriteAsJsonAsync(feed);
+        return Results.Ok(feed);
     }
     catch (FeedRequestException e)
     {
-        response.StatusCode = StatusCodes.Status400BadRequest;
-        await response.WriteAsJsonAsync(e.Message);
+        return Results.BadRequest(e.Message);
     }
     catch (FeedEmptyException e)
     {
-        response.StatusCode = StatusCodes.Status400BadRequest;
-        await response.WriteAsJsonAsync(e.Message);
+        return Results.BadRequest(e.Message);
     }
-    catch (FeedLoadException e)
+    catch (FeedLoadException)
     {
-        response.StatusCode = StatusCodes.Status500InternalServerError;
-        await response.WriteAsJsonAsync(e.Message);
+        return Results.StatusCode(StatusCodes.Status500InternalServerError);
     }
 })
 .Produces<SyndicationFeed>(StatusCodes.Status200OK)
