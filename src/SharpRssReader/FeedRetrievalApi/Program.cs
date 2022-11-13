@@ -60,6 +60,8 @@ app.MapGet("/feed", async ([FromBody] string feedUrl, [FromServices] FeedRetriev
     }
 })
 .Produces<SyndicationFeed>(StatusCodes.Status200OK)
+.ProducesProblem(StatusCodes.Status400BadRequest)
+.ProducesProblem(StatusCodes.Status500InternalServerError)
 .WithName("GetFeed").WithTags("Getters");
 
 app.Run();
