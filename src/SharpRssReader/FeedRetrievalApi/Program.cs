@@ -34,7 +34,7 @@ app.UseHttpsRedirection();
 
 app.UseAuthorization();
 
-app.MapGet("/feed", async ([FromBody] string feedUrl, [FromServices] FeedRetrievalService feedService, HttpResponse response) =>
+app.MapGet("/feed", async (string feedUrl, [FromServices] IFeedRetrievalService feedService) =>
 {
     try
     {
