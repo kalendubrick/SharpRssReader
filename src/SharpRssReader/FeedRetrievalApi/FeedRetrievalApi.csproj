@@ -15,4 +15,8 @@
     <PackageReference Include="System.ServiceModel.Syndication" Version="7.0.0" />
   </ItemGroup>
 
+	<ItemGroup>
+		<InternalsVisibleTo Include="FeedRetrievalApi.Tests" />
+	</ItemGroup>
+
 </Project>
