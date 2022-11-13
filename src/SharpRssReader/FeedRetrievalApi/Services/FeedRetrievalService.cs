@@ -1,4 +1,5 @@
 ﻿using FeedRetrievalApi.Exceptions;
+using Microsoft.Extensions.Logging.Abstractions;
 using System.ServiceModel.Syndication;
 using System.Xml;
 
@@ -14,7 +15,7 @@ public class FeedRetrievalService : IFeedRetrievalService
         ILogger<FeedRetrievalService> logger)
     {
         _httpClientFactory = httpClientFactory;
-        _logger = logger;
+        _logger = logger ?? NullLogger<FeedRetrievalService>.Instance;
     }
 
     public async Task<SyndicationFeed> ReadFeedAsync(string feedUrl)
