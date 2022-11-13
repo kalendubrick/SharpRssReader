@@ -33,7 +33,7 @@ public class FeedRetrievalService : IFeedRetrievalService
 
             _logger.LogTrace(
                     "Feed request returned {StatusCode}: {Reason}",
-                    feedResponse.StatusCode,
+                    (int)feedResponse.StatusCode,
                     feedResponse.ReasonPhrase);
 
             if (!feedResponse.IsSuccessStatusCode)
@@ -41,7 +41,7 @@ public class FeedRetrievalService : IFeedRetrievalService
                 _logger.LogDebug("Feed request failed");
 
                 throw new FeedRequestException(
-                    $"Request failed: {feedResponse.StatusCode}: {feedResponse.ReasonPhrase}");
+                    $"Request failed: {(int)feedResponse.StatusCode}: {feedResponse.ReasonPhrase}");
             }
 
             _logger.LogTrace(
