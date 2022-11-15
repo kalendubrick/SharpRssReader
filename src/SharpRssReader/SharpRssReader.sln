@@ -5,7 +5,9 @@ VisualStudioVersion = 17.3.32929.385
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FeedRetrievalApi", "FeedRetrievalApi\FeedRetrievalApi.csproj", "{9878725E-0E3C-40D9-9DAA-27E5DFBCAA4F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FeedRetrievalApi.Tests", "FeedRetrievalApi.Tests\FeedRetrievalApi.Tests.csproj", "{7583CAD8-C655-428F-B503-BE554F3B0F38}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FeedRetrievalApi.Tests", "FeedRetrievalApi.Tests\FeedRetrievalApi.Tests.csproj", "{7583CAD8-C655-428F-B503-BE554F3B0F38}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpRssReader.Models", "SharpRssReader.Models\SharpRssReader.Models.csproj", "{3C030133-A68E-40A4-BFB7-DFEAD4EBBAEA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{7583CAD8-C655-428F-B503-BE554F3B0F38}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7583CAD8-C655-428F-B503-BE554F3B0F38}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7583CAD8-C655-428F-B503-BE554F3B0F38}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3C030133-A68E-40A4-BFB7-DFEAD4EBBAEA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3C030133-A68E-40A4-BFB7-DFEAD4EBBAEA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3C030133-A68E-40A4-BFB7-DFEAD4EBBAEA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3C030133-A68E-40A4-BFB7-DFEAD4EBBAEA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
